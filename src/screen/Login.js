@@ -50,6 +50,7 @@ const Login = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
       />
+      
       <BlueButton
         title={isPending ? 'Logging in...' : 'Sign in'}
         onPress={() => handleLogin({ email, password })}
@@ -58,6 +59,14 @@ const Login = ({ navigation }) => {
         <Text>Don't have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
           <Text style={{ color: '#2F80ED', fontWeight: 'bold' }}>Sign up</Text>
+        </TouchableOpacity>
+      </View>
+       <View style={styles.footerContainer}>
+        <Text>Login as admin?</Text>
+        <TouchableOpacity onPress={() => navigation?.navigate('LoginAdmin')}>
+          <Text style={{ color: '#2F80ED', fontWeight: 'bold' }}>
+            Admin Screen
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollViewContainer>

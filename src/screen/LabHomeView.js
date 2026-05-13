@@ -10,7 +10,6 @@ import TextinputField from './components/TextinputField';
 import Button from './components/Button';
 import ShadowLine from './components/ShadowLine';
 import {
-  lockTestRequest,
   getPatientProcess,
   updateReportStatus,
   unlockTestRequest,

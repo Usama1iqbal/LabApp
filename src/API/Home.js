@@ -14,27 +14,19 @@ const handleError = error => {
 };
 
 export const getPatientsFromDB = async () => {
-  try {
     const response = await axios.get(`${BASE_URL}/get_patients`);
     return response.data;
-  } catch (error) {
-    handleError(error); // ✅ throw karo, return [] mat karo
-  }
-};
+  } 
 
 export const signupAPI = async ({ name, email, password }) => {
-  try {
+
     const response = await axios.post(`${BASE_URL}/SignUp`, {
       user_name: name,
       email,
       password,
     });
     return response.data;
-  } catch (error) {
-    console.log('Signup Error:', error);
-    throw error; // ← zarori hai useMutation ke onError ke liye
-  }
-};
+  } 
 
 // export const loginAPI = async ({ email, password }) => {
 //   try {
@@ -78,64 +70,43 @@ export const lockTestRequest = async ({vid, userId, mpi }) => {
 
 // Update report status
 export const updateReportStatus = async data => {
-  try {
     const response = await axios.put(
       `${BASE_URL}/requests/update_report_status`,
       data,
     );
     return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
+  } 
 
 export const getAcceptedList = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/patient-Accepted-list`);
+ const response = await axios.get(`${BASE_URL}/patient-Accepted-list`);
     return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
+  } 
+
 export const unlockTestRequest = async (visit_id, user_id) => {
-  try {
-    const response = await axios.put(
+ const response = await axios.put(
       `${BASE_URL}/requests/unlock_test_request/visit_id/${visit_id}/user_id/${user_id}`,
     );
     return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
+  } 
 
 // Lock single test
 export const lockSingleTest = async (test_req_id, user_id) => {
-  try {
     const response = await axios.put(
       `${BASE_URL}/requests/lock_test/${test_req_id}/user_id/${user_id}`,
     );
     return response.data;
-  } catch (error) {
-    handleError(error);
   }
-};
 
 // Unlock single test
 export const unlockSingleTest = async (test_req_id, user_id) => {
-  try {
     const response = await axios.put(
       `${BASE_URL}/requests/unlock_test_request/test_req_id/${test_req_id}/user_id/${user_id}`,
     );
     return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
+  } 
+
+
 export const getPatientDetail = async mpi => {
-  try {
     const response = await axios.get(`${BASE_URL}/patients/${mpi}`);
     return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
+  } 
