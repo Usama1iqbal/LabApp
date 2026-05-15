@@ -25,7 +25,7 @@ const AllRecords = ({ navigation }) => {
         <View style={{ flex: 1, marginRight: 10 }}>
           <TextInputWraper placeholder="Search" />
         </View>
-        <Dropdown title="Search By" options={['Name', 'MPI']} />
+        <Dropdown title="Search By" options={['Name', 'NIC']} />
       </View>
 
       {isLoading ? (
@@ -38,15 +38,15 @@ const AllRecords = ({ navigation }) => {
         <FlatList
           data={patients}
           style={{ flex: 1 }}
-          keyExtractor={item => item.mpi.toString()}
+          keyExtractor={item => item.nic.toString()}
           
           renderItem={({ item }) => (
             <PatientDetails
               title={`${item.fname} ${item.lname}`}
-              subtitle={`MPI: ${item.mpi}`}
+              subtitle={`NIC: ${item.nic}`}
               extra={item.updated_at}
               onPress={() =>
-                navigation.navigate('PatientRecord', { mpi: item.mpi })
+                navigation.navigate('PatientRecord', { nic: item.nic })
               }
             />
           )}

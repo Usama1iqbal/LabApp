@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import ScrollViewContainer from '../components/ScrollViewContainer';
-import Header from '../components/Header';
-import Button from '../components/Button';
-import Container from '../components/Container';
+import ScrollViewContainer from './components/ScrollViewContainer';
+import Header from './components/Header';
+import Button from './components/Button';
+import Container from './components/Container';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { configHistory, sentToEngine } from '../../API/Home2';
+import { configHistory, sentToEngine } from '../API/Home';
 
 const HistoryScreen = ({ navigation }) => {
   const { data: history = [], isLoading } = useQuery({

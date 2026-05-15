@@ -18,16 +18,25 @@ import NavHomeAddNotifiProfile from './components/NavHomeAddNotifiProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LabHomeScreen = ({ navigation }) => {
+  const [labId, setLabId] = useState();
+
   const { data: patients, isLoading } = useQuery({
-    queryKey: ['patientList'],
-    queryFn: getPendingList,
+    queryKey: ['patientList', labId],
+    queryFn: () => getPendingList(labId),
+    enabled: !!labId, // ← labId aane ke baad call hoga
   });
-  
+
   const [userId, setuserId] = useState(null);
   useEffect(() => {
     (async () => {
       const id = await AsyncStorage.getItem('user_id');
       setuserId(Number(id));
+    })();
+  }, []);
+  useEffect(() => {
+    (async () => {
+      const id = await AsyncStorage.getItem('Lab_ID');
+      setLabId(id);
     })();
   }, []);
 
@@ -36,12 +45,12 @@ const LabHomeScreen = ({ navigation }) => {
     onSuccess: (data, variables) => {
       console.log('Lock acquired, navigating to LabHomeView');
       navigation.navigate('LabHomeView', {
-        mpi: variables.mpi, // Pass mpi from the variables sent to the mutation
+        nic: variables.nic, // Pass nic from the variables sent to the mutation
         vid: variables.vid,
-        is_locked: true
+        is_locked: true,
       });
     },
-    onError: (error) => {
+    onError: error => {
       Alert.alert(
         'Lock Failed',
         error.message || 'Someone else is working on this',
@@ -50,15 +59,14 @@ const LabHomeScreen = ({ navigation }) => {
     },
   });
 
-  function lock_and_navigate(mpi, vid) {
-
+  function lock_and_navigate(nic, vid) {
     if (!userId) {
       Alert.alert('Error', 'User ID not found. Please log in again.', [
         { text: 'OK', onPress: () => navigation.navigate('Login') },
       ]);
       return;
     }
-    lockRequest({ vid, userId, mpi  });
+    lockRequest({ vid, userId, nic });
   }
 
   return (
@@ -68,7 +76,7 @@ const LabHomeScreen = ({ navigation }) => {
         <View style={{ flex: 1, marginRight: 10 }}>
           <TextInputWraper placeholder="Search" />
         </View>
-        <Dropdown title="Search By" options={['Name', 'MPI']} />
+        <Dropdown title="Search By" options={['Name', 'nic']} />
       </View>
       {isLoading ? (
         <ActivityIndicator
@@ -80,14 +88,14 @@ const LabHomeScreen = ({ navigation }) => {
         <FlatList
           data={patients}
           style={{ flex: 1 }}
-          keyExtractor={item => item.mpi.toString()}
+          keyExtractor={item => item.nic.toString()}
           contentContainerStyle={{ paddingHorizontal: 15, paddingBottom: 20 }}
           renderItem={({ item }) => (
             <PatientDetails
               title={`${item.fname} ${item.lname}`}
-              subtitle={`MPI: ${item.mpi}`}
+              subtitle={`nic: ${item.nic}`}
               extra={`Visit ID: ${item.vid}`}
-              onPress={() => lock_and_navigate(item.mpi, item.vid)}
+              onPress={() => lock_and_navigate(item.nic, item.vid)}
             />
           )}
           ListEmptyComponent={

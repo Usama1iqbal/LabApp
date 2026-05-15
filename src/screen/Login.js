@@ -6,26 +6,40 @@ import ScrollViewContainer from './components/ScrollViewContainer';
 import Header from './components/Header';
 import TextInputWraper from './components/TextInputWraper';
 import BlueButton from './components/BlueButton';
-
-import { useMutation } from '@tanstack/react-query';
-import { loginAPI } from '../API/Home';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { loginAPI, getAllLabs } from '../API/Home';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DropdownArrow from './components/DropdownArrow';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [Lab, setLab] = useState(null);
 
   // useMutation
   const { mutate: handleLogin, isPending } = useMutation({
-    mutationFn: loginAPI,    
-    onSuccess: async (response) => {
+    mutationFn: loginAPI,
+    onSuccess: async response => {
       await AsyncStorage.setItem('user_id', String(response?.user_id));
+      await AsyncStorage.setItem('Lab_ID', String(response?.lab_id));
       navigation.navigate('AllRecords');
     },
     onError: error => {
       Alert.alert('Login Failed', error.message || 'Network Error');
     },
   });
+
+  const { data: LabData, isLoading } = useQuery({
+    queryKey: ['labs'],
+    queryFn: getAllLabs,
+  });
+
+  // Transform data for Dropdown (label/value format)
+  const LabList =
+    LabData?.map(h => ({
+      label: h.name,
+      value: h.lab_id,
+    })) || [];
 
   return (
     <ScrollViewContainer>
@@ -50,10 +64,17 @@ const Login = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
       />
-      
+      <DropdownArrow
+        placeholder="Select Lab"
+        icon={require('../assests/Logs.png')}
+        data={LabList}
+        value={Lab}
+        onChange={item => setLab(item.value)}
+        loading={isLoading}
+      />
       <BlueButton
         title={isPending ? 'Logging in...' : 'Sign in'}
-        onPress={() => handleLogin({ email, password })}
+        onPress={() => handleLogin({ email, password, lab_id: Lab })}
       />
       <View style={styles.footerContainer}>
         <Text>Don't have an account? </Text>
@@ -61,7 +82,7 @@ const Login = ({ navigation }) => {
           <Text style={{ color: '#2F80ED', fontWeight: 'bold' }}>Sign up</Text>
         </TouchableOpacity>
       </View>
-       <View style={styles.footerContainer}>
+      <View style={styles.footerContainer}>
         <Text>Login as admin?</Text>
         <TouchableOpacity onPress={() => navigation?.navigate('LoginAdmin')}>
           <Text style={{ color: '#2F80ED', fontWeight: 'bold' }}>

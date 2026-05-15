@@ -9,15 +9,39 @@ import LabHomeView from '../LabHomeView';
 import PatientLabRecord from '../PatientLabRecord';
 import AddTestResult from '../AddTestResult';
 import ViewPendingPatient from '../ViewPendingPatient';
+import LoginAdmin from '../LoginAdmin';
+import AdminScreen from '../AdminScreen';
+import AdminDashboard from '../AdminDashboard';
+import HistoryScreen from '../HistoryScreen';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="Signup">
       <Stack.Screen
         name="Signup"
         component={Signup}
+        options={{ headerShown: false }}
+      />
+        <Stack.Screen
+        name="HistoryScreen"
+        component={HistoryScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AdminDashboard"
+        component={AdminDashboard}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="LoginAdmin"
+        component={LoginAdmin}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AdminScreen"
+        component={AdminScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

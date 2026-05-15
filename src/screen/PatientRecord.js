@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { getPatientDetail } from '../API/Home';
@@ -8,13 +8,22 @@ import Boxx from './components/Boxx';
 import ShadowLine from './components/ShadowLine';
 import PagePatientDetail from './components/PagePatientDetail';
 import NavHomeAddNotifiProfile from './components/NavHomeAddNotifiProfile';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PatientRecord = ({ navigation, route }) => {
-  const { mpi } = route.params; // AllRecords se aaya
+  const { nic } = route.params; // AllRecords se aaya
+  const [labId, setLabId] = useState();
+  useEffect(() => {
+    (async () => {
+      const id = await AsyncStorage.getItem('Lab_ID'); // ← get karo, set nahi
+      setLabId(id);
+    })();
+  }, []);
 
   const { data: patient, isLoading } = useQuery({
-    queryKey: ['patientDetail', mpi],
-    queryFn: () => getPatientDetail(mpi),
+    queryKey: ['patientDetail', nic, labId],
+    queryFn: () => getPatientDetail(nic, labId),
+    enabled: !!nic && !!labId, // ← dono aane ke baad call ho
   });
 
   if (isLoading) {
@@ -38,7 +47,7 @@ const PatientRecord = ({ navigation, route }) => {
             { label: 'Name', value: `${patient?.fname} ${patient?.lname}` },
             { label: 'Age', value: patient?.age },
             { label: 'Gender', value: patient?.gender },
-            { label: 'MPI', value: patient?.mpi },
+            { label: 'nic', value: patient?.nic },
           ]}
         />
         <ShadowLine />

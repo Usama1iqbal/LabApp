@@ -17,7 +17,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LabHomeView = ({ navigation, route }) => {
-  const { mpi, vid, is_locked } = route.params; // LabHomeScreen se aaya
+  const { nic, vid, is_locked } = route.params; // LabHomeScreen se aaya
   const [userId, setuserId] = useState(null);
 
   const [statusMap, setStatusMap] = useState({});
@@ -36,8 +36,8 @@ const LabHomeView = ({ navigation, route }) => {
     isLoading,
     error: patientError,
   } = useQuery({
-    queryKey: ['patientProcess', mpi, vid],
-    queryFn: () => getPatientProcess(mpi, vid),
+    queryKey: ['patientProcess', nic, vid],
+    queryFn: () => getPatientProcess(nic, vid),
     enabled: is_locked,
   });
 
@@ -95,7 +95,7 @@ const LabHomeView = ({ navigation, route }) => {
         />
         <Boxx
           data={[
-            { label: 'MPI', value: patientData?.mpi },
+            { label: 'nic', value: patientData?.nic },
             { label: 'VID', value: vid },
             { label: 'Age', value: patientData?.age },
             { label: 'Gender', value: patientData?.gender },

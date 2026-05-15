@@ -5,14 +5,15 @@ import ScrollViewContainer from './components/ScrollViewContainer';
 import Header from './components/Header';
 import TextInputWraper from './components/TextInputWraper';
 import BlueButton from './components/BlueButton';
-
-import { useMutation } from '@tanstack/react-query';
-import { signupAPI } from '../API/Home';
+import DropdownArrow from './components/DropdownArrow';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { signupAPI, getAllLabs } from '../API/Home';
 
 const Signup = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [lab, setLab] = useState('');
 
   const { mutate: handleSignup, isPending } = useMutation({
     mutationFn: signupAPI,
@@ -25,6 +26,18 @@ const Signup = ({ navigation }) => {
       Alert.alert('Signup Failed', error.message || 'Network Error');
     },
   });
+
+  const { data: LabData, isLoading } = useQuery({
+    queryKey: ['labs'],
+    queryFn: getAllLabs,
+  });
+
+  // Transform data for Dropdown (label/value format)
+  const LabList =
+    LabData?.map(h => ({
+      label: h.name,
+      value: h.lab_id,
+    })) || [];
 
   return (
     <ScrollViewContainer>
@@ -51,9 +64,18 @@ const Signup = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
       />
+
+      <DropdownArrow
+        placeholder="Select Lab"
+        icon={require('../assests/Logs.png')}
+        data={LabList} // Fix 2: Using transformed list
+        value={lab}
+        onChange={item => setLab(item.value)} // Fix 3: Setting the ID
+        loading={isLoading}
+      />
       <BlueButton
         title={isPending ? 'Creating Account...' : 'Sign up'}
-        onPress={() => handleSignup({ name, email, password })}
+        onPress={() => handleSignup({ name, email, password, lab_id: lab })}
         disabled={isPending}
       />
       <View style={styles.footerContainer}>

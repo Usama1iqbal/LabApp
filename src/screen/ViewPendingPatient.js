@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -13,11 +13,21 @@ import Dropdown from './components/Dropdown';
 import TextInputWraper from './components/TextInputWraper';
 import PatientDetails from './components/PatientDetails';
 import NavHomeAddNotifiProfile from './components/NavHomeAddNotifiProfile';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ViewPendingPatient = ({ navigation }) => {
+  const [labId, setLabId] = useState();
+
+  useEffect(() => {
+    (async () => {
+      const id = await AsyncStorage.getItem('Lab_ID'); // ← get karo, set nahi
+      setLabId(id);
+    })();
+  }, []);
+
   const { data: patients = [], isLoading } = useQuery({
-    queryKey: ['acceptedList'],
-    queryFn: getAcceptedList,
+    queryKey: () => ['acceptedList', labId],
+    queryFn: getAcceptedList(labId),
   });
 
   return (
@@ -28,7 +38,7 @@ const ViewPendingPatient = ({ navigation }) => {
         <View style={{ flex: 1, marginRight: 10 }}>
           <TextInputWraper placeholder="Search" />
         </View>
-        <Dropdown title="Search By" options={['Name', 'MPI']} />
+        <Dropdown title="Search By" options={['Name', 'nic']} />
       </View>
 
       {isLoading ? (
@@ -41,16 +51,16 @@ const ViewPendingPatient = ({ navigation }) => {
         <FlatList
           data={patients}
           style={{ flex: 1 }}
-          keyExtractor={item => item.mpi.toString()}
+          keyExtractor={item => item.nic.toString()}
           contentContainerStyle={{ paddingHorizontal: 15, paddingBottom: 20 }}
           renderItem={({ item }) => (
             <PatientDetails
               title={`${item.fname} ${item.lname}`}
-              subtitle={`MPI: ${item.mpi}`}
+              subtitle={`nic: ${item.nic}`}
               extra={`Visit ID: ${item.vid}`}
               onPress={() =>
                 navigation.navigate('AddTestResult', {
-                  mpi: item.mpi,
+                  nic: item.nic,
                   vid: item.vid,
                 })
               }

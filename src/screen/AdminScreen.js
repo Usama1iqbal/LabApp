@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import ScrollViewContainer from '../components/ScrollViewContainer';
-import Header from '../components/Header';
-import Button from '../components/Button';
-import TextinputField from '../components/TextinputField';
-import Checkbox from '../components/CheckBox';
+import ScrollViewContainer from './components/ScrollViewContainer';
+import Header from './components/Header';
+import Button from './components/Button';
+import TextinputField from './components/TextinputField';
+import Checkbox from './components/CheckBox';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   changeConfig,
-  addHospital,
-  allHospital,
-  configHistory,
-} from '../../API/Home2';
+  addLab,
+} from '../API/Home';
 
 const AdminScreen = ({ navigation }) => {
   const [isChecked, setIsChecked] = useState(false);
-  const [hospitalName, setHospitalName] = useState('');
-  const [showAddHospital, setShowAddHospital] = useState(false);
+  const [LabName, setLabName] = useState('');
+  const [showAddLab, setShowAddLab] = useState(false);
 
   const { mutate: saveConfig, isPending } = useMutation({
     mutationFn: changeConfig,
@@ -24,13 +22,13 @@ const AdminScreen = ({ navigation }) => {
     onError: error => Alert.alert('Error', error.message),
   });
 
-  const { mutate: addHospitalMutate, isPending: hospitalPending } = useMutation(
+  const { mutate: addLabMutate, isPending: labPending } = useMutation(
     {
-      mutationFn: addHospital,
+      mutationFn: addLab,
       onSuccess: data => {
         Alert.alert('Success', data.message);
-        setHospitalName('');
-        setShowAddHospital(false); // 👈 save ke baad hide kar do
+        setLabName('');
+        setShowAddLab(false); // 👈 save ke baad hide kar do
       },
       onError: error => Alert.alert('Error', error.message),
     },
@@ -49,36 +47,36 @@ const AdminScreen = ({ navigation }) => {
       <View style={styles.statsCard}>
         <View style={styles.serverHeaderRow}>
           <Button
-            title={'Show Hospitals'}
+            title={'Show Labs'}
             onPress={() => navigation.navigate('AdminDashboard')}
             style={{ flex: 1 }}
           />
           <Button
-            title="Add Hospital"
-            onPress={() => setShowAddHospital(prev => !prev)} // 👈 toggle karo
+            title="Add Lab"
+            onPress={() => setShowAddLab(prev => !prev)} // 👈 toggle karo
             style={{ flex: 1 }}
           />
         </View>
       </View>
 
-      {/* Add Hospital Form - sirf tab dikhao jab button press ho */}
-      {showAddHospital && (
+      {/* Add Lab Form - sirf tab dikhao jab button press ho */}
+      {showAddLab && (
         <View style={styles.statsCard}>
           <TextinputField
-            placeholder="Enter Hospital Name"
-            value={hospitalName}
-            onChangeText={setHospitalName}
+            placeholder="Enter Lab Name"
+            value={LabName}
+            onChangeText={setLabName}
           />
           <View style={styles.serverHeaderRow}>
             <Button
-              title={hospitalPending ? 'Saving...' : 'Save'}
-              onPress={() => addHospitalMutate(hospitalName)} // 👈 sirf addHospital API
+              title={labPending ? 'Saving...' : 'Save'}
+              onPress={() => addLabMutate(LabName)} // 👈 sirf addLab API
             />
             <Button
               title="Cancel"
               onPress={() => {
-                setHospitalName('');
-                setShowAddHospital(false); // 👈 cancel pe hide
+                setLabName('');
+                setShowAddLab(false); // 👈 cancel pe hide
               }}
             />
           </View>
